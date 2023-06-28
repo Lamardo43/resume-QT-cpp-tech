@@ -27,3 +27,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     client.pro.user
+
+RESOURCES += \
+    res.qrc

@@ -28,18 +28,12 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_SingletonClient_t {
-    uint offsetsAndSizes[22];
+    uint offsetsAndSizes[10];
     char stringdata0[16];
     char stringdata1[20];
     char stringdata2[1];
     char stringdata3[4];
-    char stringdata4[8];
-    char stringdata5[13];
-    char stringdata6[15];
-    char stringdata7[9];
-    char stringdata8[14];
-    char stringdata9[16];
-    char stringdata10[15];
+    char stringdata4[15];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_SingletonClient_t::offsetsAndSizes) + ofs), len 
@@ -49,24 +43,12 @@ Q_CONSTINIT static const qt_meta_stringdata_SingletonClient_t qt_meta_stringdata
         QT_MOC_LITERAL(16, 19),  // "message_from_server"
         QT_MOC_LITERAL(36, 0),  // ""
         QT_MOC_LITERAL(37, 3),  // "msg"
-        QT_MOC_LITERAL(41, 7),  // "auth_ok"
-        QT_MOC_LITERAL(49, 12),  // "auth_invalid"
-        QT_MOC_LITERAL(62, 14),  // "change_pass_ok"
-        QT_MOC_LITERAL(77, 8),  // "admin_ok"
-        QT_MOC_LITERAL(86, 13),  // "add_access_ok"
-        QT_MOC_LITERAL(100, 15),  // "add_access_fail"
-        QT_MOC_LITERAL(116, 14)   // "slotServerRead"
+        QT_MOC_LITERAL(41, 14)   // "slotServerRead"
     },
     "SingletonClient",
     "message_from_server",
     "",
     "msg",
-    "auth_ok",
-    "auth_invalid",
-    "change_pass_ok",
-    "admin_ok",
-    "add_access_ok",
-    "add_access_fail",
     "slotServerRead"
 };
 #undef QT_MOC_LITERAL
@@ -78,33 +60,21 @@ Q_CONSTINIT static const uint qt_meta_data_SingletonClient[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       7,       // signalCount
+       1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   62,    2, 0x06,    1 /* Public */,
-       4,    1,   65,    2, 0x06,    3 /* Public */,
-       5,    0,   68,    2, 0x06,    5 /* Public */,
-       6,    0,   69,    2, 0x06,    6 /* Public */,
-       7,    1,   70,    2, 0x06,    7 /* Public */,
-       8,    0,   73,    2, 0x06,    9 /* Public */,
-       9,    0,   74,    2, 0x06,   10 /* Public */,
+       1,    1,   26,    2, 0x06,    1 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-      10,    0,   75,    2, 0x08,   11 /* Private */,
+       4,    0,   29,    2, 0x08,    3 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString,    3,
-    QMetaType::Void, QMetaType::QString,    2,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,    2,
-    QMetaType::Void,
-    QMetaType::Void,
 
  // slots: parameters
     QMetaType::Void,
@@ -124,20 +94,6 @@ Q_CONSTINIT const QMetaObject SingletonClient::staticMetaObject = { {
         // method 'message_from_server'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<QString, std::false_type>,
-        // method 'auth_ok'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QString, std::false_type>,
-        // method 'auth_invalid'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'change_pass_ok'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'admin_ok'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QString, std::false_type>,
-        // method 'add_access_ok'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'add_access_fail'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'slotServerRead'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
@@ -151,13 +107,7 @@ void SingletonClient::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         (void)_t;
         switch (_id) {
         case 0: _t->message_from_server((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 1: _t->auth_ok((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 2: _t->auth_invalid(); break;
-        case 3: _t->change_pass_ok(); break;
-        case 4: _t->admin_ok((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 5: _t->add_access_ok(); break;
-        case 6: _t->add_access_fail(); break;
-        case 7: _t->slotServerRead(); break;
+        case 1: _t->slotServerRead(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -166,48 +116,6 @@ void SingletonClient::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
             using _t = void (SingletonClient::*)(QString );
             if (_t _q_method = &SingletonClient::message_from_server; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 0;
-                return;
-            }
-        }
-        {
-            using _t = void (SingletonClient::*)(QString );
-            if (_t _q_method = &SingletonClient::auth_ok; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 1;
-                return;
-            }
-        }
-        {
-            using _t = void (SingletonClient::*)();
-            if (_t _q_method = &SingletonClient::auth_invalid; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 2;
-                return;
-            }
-        }
-        {
-            using _t = void (SingletonClient::*)();
-            if (_t _q_method = &SingletonClient::change_pass_ok; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 3;
-                return;
-            }
-        }
-        {
-            using _t = void (SingletonClient::*)(QString );
-            if (_t _q_method = &SingletonClient::admin_ok; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 4;
-                return;
-            }
-        }
-        {
-            using _t = void (SingletonClient::*)();
-            if (_t _q_method = &SingletonClient::add_access_ok; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 5;
-                return;
-            }
-        }
-        {
-            using _t = void (SingletonClient::*)();
-            if (_t _q_method = &SingletonClient::add_access_fail; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 6;
                 return;
             }
         }
@@ -233,13 +141,13 @@ int SingletonClient::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 2)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 2;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 2)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 8;
+        _id -= 2;
     }
     return _id;
 }
@@ -249,44 +157,6 @@ void SingletonClient::message_from_server(QString _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
-}
-
-// SIGNAL 1
-void SingletonClient::auth_ok(QString _t1)
-{
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
-    QMetaObject::activate(this, &staticMetaObject, 1, _a);
-}
-
-// SIGNAL 2
-void SingletonClient::auth_invalid()
-{
-    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
-}
-
-// SIGNAL 3
-void SingletonClient::change_pass_ok()
-{
-    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
-}
-
-// SIGNAL 4
-void SingletonClient::admin_ok(QString _t1)
-{
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
-    QMetaObject::activate(this, &staticMetaObject, 4, _a);
-}
-
-// SIGNAL 5
-void SingletonClient::add_access_ok()
-{
-    QMetaObject::activate(this, &staticMetaObject, 5, nullptr);
-}
-
-// SIGNAL 6
-void SingletonClient::add_access_fail()
-{
-    QMetaObject::activate(this, &staticMetaObject, 6, nullptr);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

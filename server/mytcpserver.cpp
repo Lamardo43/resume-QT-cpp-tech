@@ -1,8 +1,6 @@
 #include "mytcpserver.h"
-#include "qscreen.h"
 #include <QDebug>
 #include <QCoreApplication>
-#include <QDesktopWidget>
 
 QList<QTcpSocket*> clients;
 
@@ -26,10 +24,6 @@ MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
         server_status=1;
         qDebug() << "server is started";
     }
-
-    QDesktopWidget* win = qApp->desktop();
-    QPixmap px = QGuiApplication::primaryScreen()->grabWindow(QApplication::desktop()->winId());
-    px.save("screen.png");
 }
 
 void MyTcpServer::slotNewConnection(){
@@ -43,6 +37,8 @@ void MyTcpServer::slotNewConnection(){
         connect(cTcpSocket,&QTcpSocket::disconnected,
                 this,&MyTcpServer::slotClientDisconnected);
         mTcpSocket.push_back(cTcpSocket);
+
+        qDebug() << mTcpSocket;
     }
 }
 
@@ -53,11 +49,9 @@ void MyTcpServer::slotServerRead(){
     {
         array.append(cTcpSocket->readAll());
     }
-    if(array.right(1) == "\n")
-    {
-        qDebug() << array;
-        cTcpSocket->write(array);
-    }
+
+    qDebug() << array;
+    cTcpSocket->write(array);
 }
 
 void MyTcpServer::slotClientDisconnected(){

@@ -6,6 +6,7 @@ SingletonClient::SingletonClient(QObject *parent) : QObject(parent){
     connect(mTcpSocket, &QTcpSocket::readyRead,
             this, &SingletonClient::slotServerRead);
 
+    qDebug() << "singleton";
 }
 SingletonClient* SingletonClient::getInstance(){
     if (!p_instance)
@@ -21,7 +22,6 @@ void SingletonClient::send_msg_to_server(QString query){
 }
 
 void SingletonClient::slotServerRead(){
-    qDebug()<<"slot";
     QString msg = "";
     while(mTcpSocket->bytesAvailable()>0)
     {
@@ -30,32 +30,7 @@ void SingletonClient::slotServerRead(){
             break;
     }
     qDebug()<<msg;
-    QStringList answer = msg.split("&");
-    //emit message_from_server(msg);
-    if(answer[0] == "auth+")
-    {
-        emit auth_ok(answer[1]);
-        if (answer.size() == 3)
-        {
-            emit admin_ok(answer[2]);
-        }
-    }
-    if (answer[0] == "auth-\r\n")
-    {
-        emit auth_invalid();
-    }
-    if (answer[0] == "change_pass+\r\n")
-    {
-        emit change_pass_ok();
-    }
-    if(answer[0] == "add_access+")
-    {
-        emit add_access_ok();
-    }
-    if (answer[0] == "add_access-")
-    {
-        emit add_access_fail();
-    }
+
 }
 
 SingletonClient::~SingletonClient(){
