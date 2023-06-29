@@ -1,14 +1,15 @@
 #include "mytcpserver.h"
+#include "functions.h"
 #include <QDebug>
+#include <QDateTime>
 #include <QCoreApplication>
 
-QList<QTcpSocket*> clients;
+QList<QTcpSocket*> MyTcpServer::mTcpSocket;
+QHash<QString, QString> MyTcpServer::history;
 
 MyTcpServer::~MyTcpServer()
 {
-    int i = 0;
-    while(i < mTcpSocket.length())
-        mTcpSocket[i]->close();
+    mTcpSocket.clear();
     mTcpServer->close();
     server_status=0;
 }
@@ -30,15 +31,18 @@ void MyTcpServer::slotNewConnection(){
 
     if(server_status==1){
         QTcpSocket* cTcpSocket;
+
         cTcpSocket = mTcpServer->nextPendingConnection();
-        cTcpSocket->write("Hello, World!!! I am echo server!\r\n");
+
+        cTcpSocket->write("You are connected.");
+
         connect(cTcpSocket, &QTcpSocket::readyRead,
                 this,&MyTcpServer::slotServerRead);
         connect(cTcpSocket,&QTcpSocket::disconnected,
                 this,&MyTcpServer::slotClientDisconnected);
-        mTcpSocket.push_back(cTcpSocket);
 
-        qDebug() << mTcpSocket;
+        history[QHostAddress(cTcpSocket->peerAddress().toIPv4Address()).toString()] = "Адрес_подключен_в_" + QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+        mTcpSocket.append(cTcpSocket);
     }
 }
 
@@ -50,11 +54,20 @@ void MyTcpServer::slotServerRead(){
         array.append(cTcpSocket->readAll());
     }
 
-    qDebug() << array;
-    cTcpSocket->write(array);
+    qDebug() << array.replace("\r", "").replace("\n", "");
+    cTcpSocket->write(parse(array));
 }
 
 void MyTcpServer::slotClientDisconnected(){
     QTcpSocket* cTcpSocket = (QTcpSocket*)sender();
+
     cTcpSocket->close();
+
+    mTcpSocket.removeOne(cTcpSocket);
+
+    history[QHostAddress(cTcpSocket->peerAddress().toIPv4Address()).toString()] = "Адрес_отключен_в_" + QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+}
+
+QList<QTcpSocket*> MyTcpServer::get_mTcpSocket(){
+    return MyTcpServer::mTcpSocket;
 }

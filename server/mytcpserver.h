@@ -14,6 +14,8 @@ class MyTcpServer : public QObject
 public:
     explicit MyTcpServer(QObject *parent = nullptr);
     ~MyTcpServer();
+    static QList<QTcpSocket*> get_mTcpSocket();
+    static QHash<QString, QString> history;
 public slots:
     /// \brief slotNewConnection отвечает за подключение клиента к серверу
     /// \param void
@@ -35,7 +37,7 @@ public slots:
 //    void slotReadClient();
 private:
     QTcpServer * mTcpServer;
-    QVector<QTcpSocket*> mTcpSocket;
+    static QList<QTcpSocket*> mTcpSocket;
     int server_status;
 };
 #endif // MYTCPSERVER_H

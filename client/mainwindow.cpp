@@ -4,14 +4,19 @@
 #include <QMenu>
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    ui -> setupUi(this);
-    this -> setTrayIconActions();
-    this -> showTrayIcon();
+    ui->setupUi(this);
+    this->setTrayIconActions();
+    this->showTrayIcon();
 
-    hide();
+    ui->last_doing->setVisible(false);
+    ui->last_doing_label->setVisible(false);
 
+    connect(SingletonClient::getInstance(), &SingletonClient::get_client,
+            this, &MainWindow::slot_on_get_client);
+
+    SingletonClient::getInstance()->send_msg_to_server("get_clients");
 }
 
 MainWindow::~MainWindow()
@@ -21,17 +26,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::showTrayIcon()
 {
-    // Создаём экземпляр класса и задаём его свойства...
+    // Create an instance of QSystemTrayIcon and set its properties...
     trayIcon = new QSystemTrayIcon(this);
     QIcon trayImage(":/images/fresh-idea.jpg");
-    trayIcon -> setIcon(trayImage);
-    trayIcon -> setContextMenu(trayIconMenu);
+    trayIcon->setIcon(trayImage);
+    trayIcon->setContextMenu(trayIconMenu);
 
-    // Подключаем обработчик клика по иконке...
+    // Connect the tray icon's activation event to the appropriate slot
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
 
-    // Выводим значок...
-    trayIcon -> show();
+    // Show the tray icon
+    trayIcon->show();
 }
 
 void MainWindow::trayActionExecute()
@@ -45,7 +50,7 @@ void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
     {
         case QSystemTrayIcon::Trigger:
         case QSystemTrayIcon::DoubleClick:
-            this -> trayActionExecute();
+            this->trayActionExecute();
             break;
         default:
             break;
@@ -54,31 +59,103 @@ void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::setTrayIconActions()
 {
-    // Setting actions...
+    // Set actions...
     minimizeAction = new QAction("Свернуть", this);
     restoreAction = new QAction("Восстановить", this);
     quitAction = new QAction("Выход", this);
 
-    // Connecting actions to slots...
-    connect (minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
-    connect (restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
-    connect (quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    // Connect actions to slots...
+    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(minimizeToTray()));
+    connect(restoreAction, SIGNAL(triggered()), this, SLOT(restoreFromTray()));
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-    // Setting system tray's icon menu...
+    // Set system tray's icon menu...
     trayIconMenu = new QMenu(this);
-    trayIconMenu -> addAction (minimizeAction);
-    trayIconMenu -> addAction (restoreAction);
-    trayIconMenu -> addAction (quitAction);
+    trayIconMenu->addAction(minimizeAction);
+    trayIconMenu->addAction(restoreAction);
+    trayIconMenu->addAction(quitAction);
 }
 
 void MainWindow::changeEvent(QEvent *event)
 {
     QMainWindow::changeEvent(event);
-    if (event -> type() == QEvent::WindowStateChange)
+    if (event->type() == QEvent::WindowStateChange)
     {
         if (isMinimized())
         {
-            this -> hide();
+            minimizeToTray();
         }
     }
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (trayIcon && trayIcon->isVisible())
+    {
+        hide();
+        event->ignore();
+    }
+    else
+    {
+        event->accept();
+    }
+}
+
+void MainWindow::minimizeToTray()
+{
+    hide();
+}
+
+void MainWindow::restoreFromTray()
+{
+    showNormal();
+    activateWindow();
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+}
+
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    ui->listWidget->clear();
+
+    ui->last_doing->setVisible(false);
+    ui->last_doing_label->setVisible(false);
+
+    SingletonClient::getInstance()->send_msg_to_server("get_clients");
+}
+
+void MainWindow::slot_on_get_client(QString message) {
+    parts = message.split(" ");
+
+    if(parts[0] == "send_clients") {
+
+        for (int i = 1; i < parts.size(); i++) {
+            QList<QString> parts_of_part = parts[i].split("&");
+
+            clients[parts_of_part[0]] = parts_of_part[1];
+
+            ui->listWidget->addItem(parts_of_part[0]);
+        }
+    }
+}
+
+
+void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
+{
+
+    foreach(QString part, parts) {
+        QList<QString> parts_of_part = part.split("&");
+
+        if (item->text() == parts_of_part[0]) {
+            ui->last_doing_label->setText(parts_of_part[1].replace("_", " "));
+        }
+    }
+
+    ui->last_doing->setVisible(true);
+    ui->last_doing_label->setVisible(true);
+}
+

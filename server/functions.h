@@ -7,4 +7,6 @@
 
 QByteArray parse(QByteArray message);
 
+QByteArray get_clients();
+
 #endif // FUNCTIONS_H
