@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include <QCoreApplication>
 
-QList<QTcpSocket*> MyTcpServer::mTcpSocket;
+QHash<QTcpSocket*, QString> MyTcpServer::mTcpSocket;
 QHash<QString, QString> MyTcpServer::history;
 
 MyTcpServer::~MyTcpServer()
@@ -41,21 +41,22 @@ void MyTcpServer::slotNewConnection(){
         connect(cTcpSocket,&QTcpSocket::disconnected,
                 this,&MyTcpServer::slotClientDisconnected);
 
-        history[QHostAddress(cTcpSocket->peerAddress().toIPv4Address()).toString()] = "Адрес_подключен_в_" + QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
-        mTcpSocket.append(cTcpSocket);
+        history[QHostAddress(cTcpSocket->peerAddress().toIPv4Address()).toString()] = "Адрес_подключен_в_" + QDateTime::currentDateTime().toString("yyyy-MM-dd_hh:mm:ss");
+        mTcpSocket[cTcpSocket] = QHostAddress(cTcpSocket->peerAddress().toIPv4Address()).toString();
     }
 }
 
 void MyTcpServer::slotServerRead(){
-    QByteArray array;
+    QString array;
     QTcpSocket* cTcpSocket = (QTcpSocket*)sender();
     while(cTcpSocket->bytesAvailable()>0)
     {
         array.append(cTcpSocket->readAll());
     }
 
-    qDebug() << array.replace("\r", "").replace("\n", "");
-    cTcpSocket->write(parse(array));
+    qDebug() << array;
+    qDebug() << array.split(" ").size();
+    cTcpSocket->write(parse(array, cTcpSocket));
 }
 
 void MyTcpServer::slotClientDisconnected(){
@@ -63,11 +64,11 @@ void MyTcpServer::slotClientDisconnected(){
 
     cTcpSocket->close();
 
-    mTcpSocket.removeOne(cTcpSocket);
+    mTcpSocket.remove(cTcpSocket);
 
-    history[QHostAddress(cTcpSocket->peerAddress().toIPv4Address()).toString()] = "Адрес_отключен_в_" + QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+    history[QHostAddress(cTcpSocket->peerAddress().toIPv4Address()).toString()] = "Адрес_отключен_в_" + QDateTime::currentDateTime().toString("yyyy-MM-dd-_hh:mm:ss");
 }
 
-QList<QTcpSocket*> MyTcpServer::get_mTcpSocket(){
+QHash<QTcpSocket*, QString> MyTcpServer::get_mTcpSocket(){
     return MyTcpServer::mTcpSocket;
 }

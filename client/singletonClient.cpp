@@ -25,15 +25,19 @@ void SingletonClient::slotServerRead(){
     while(mTcpSocket->bytesAvailable()>0)
     {
         message.append(mTcpSocket->readAll());
-        if(message.right(1) == "\n")
-            break;
     }
 
     qDebug()<<message;
 
     QList<QString>parts = message.split(" ");
 
-    if (parts[0] == "send_clients") {
+    if (parts[0] == "get_screenshot_to") {
+        SingletonClient::getInstance()->send_msg_to_server("send_screenshot_to " + parts[1] + " " + emit get_scr());
+    }
+    else if (parts[0] == "send_screenshot") {
+        emit set_scr(parts[1].toUtf8());
+    }
+    else if (parts[0] == "send_clients") {
         emit get_client(message);
     }
 }
