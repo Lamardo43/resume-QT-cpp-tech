@@ -173,14 +173,17 @@ void MainWindow::slot_on_get_scr(QByteArray owner) {
 
         QByteArray byteArray = convertPixmapToJSONString(screenshot).toUtf8();
 
-        qDebug() << byteArray.size();
         SingletonClient::getInstance()->send_msg_to_server("send_screenshot_to" + SPLIT_SYMBOL + owner + SPLIT_SYMBOL  + byteArray);
     }
 }
 
 void MainWindow::slot_on_set_scr(QByteArray byteArray) {
-    qDebug() << byteArray.size();
-    ui->picture->setPixmap(convertJSONStringToPixmap(byteArray));
+    QSize labelSize = ui->picture->size();
+
+    QPixmap scaledPixmap = convertJSONStringToPixmap(byteArray).scaledToWidth(labelSize.width(), Qt::SmoothTransformation);  // Масштабируем QPixmap по ширине QLabel
+    // QPixmap scaledPixmap = originalPixmap.scaledToHeight(labelSize.height(), Qt::SmoothTransformation);  // Масштабируем QPixmap по высоте QLabel
+
+    ui->picture->setPixmap(scaledPixmap);
 }
 
 QString  MainWindow::convertPixmapToJSONString(const QPixmap& pixmap) {
