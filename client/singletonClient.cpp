@@ -35,7 +35,7 @@ void SingletonClient::slotServerRead(){
 
     QList<QByteArray> parts = message.split(SPLIT_SYMBOL.at(0));
 
-    qDebug()<< message;
+    qDebug()<< QString(message);
 
     if (parts.last() == END_SYMBOL)
     {
