@@ -31,8 +31,8 @@ private slots:
     void restoreFromTray();
 
     void slot_on_get_client(QString message);
-    void slot_on_get_scr(QString);
-    void slot_on_set_scr(QString);
+    void slot_on_get_scr(QByteArray);
+    void slot_on_set_scr(QByteArray);
 
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
@@ -48,8 +48,9 @@ private:
     QSystemTrayIcon *trayIcon;
     QHash<QString, QString> clients;
     QList<QString>parts;
-    QPixmap convertByteArrayToPixmap(const QByteArray& byteArray);
-    QByteArray convertPixmapToByteArray(const QPixmap& pixmap);
+
+    QString  convertPixmapToJSONString(const QPixmap&);
+    QPixmap convertJSONStringToPixmap(const QString&);
 };
 
 #endif // MAINWINDOW_H

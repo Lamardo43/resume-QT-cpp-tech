@@ -6,7 +6,7 @@
 #include <QGuiApplication>
 #include <QPixmap>
 
-QByteArray parse(QString, QTcpSocket*);
+void parse(QByteArray, QTcpSocket*);
 
 QByteArray get_clients();
 

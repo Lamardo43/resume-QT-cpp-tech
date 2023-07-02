@@ -4,7 +4,7 @@
 
 QString message = "";
 
-QByteArray parse(QString mes, QTcpSocket* cTcpSocket) {
+void parse(QByteArray mes, QTcpSocket* cTcpSocket) {
 
     message.append(mes);
 
@@ -24,7 +24,6 @@ QByteArray parse(QString mes, QTcpSocket* cTcpSocket) {
             foreach (QTcpSocket* socket, sockets.keys()) {
                 if (parts[1] == sockets[socket]) {
                     socket->write("get_screenshot_to" + SPLIT_SYMBOL + QHostAddress(cTcpSocket->peerAddress().toIPv4Address()).toString().toUtf8() + SPLIT_SYMBOL + END_SYMBOL);
-                    return "_";
                 }
             }
         }
@@ -32,24 +31,20 @@ QByteArray parse(QString mes, QTcpSocket* cTcpSocket) {
             message.clear();
             QHash<QTcpSocket*, QString> sockets = MyTcpServer::get_mTcpSocket();
 
+            QString part = "";
+            part = parts.mid(2, parts.size()+1).join("");
+
             foreach (QTcpSocket* socket, sockets.keys()) {
                 if (parts[1] == sockets[socket]) {
-                    QString part = "";
-
-                    part = parts.mid(2, parts.size()).join("");
-
                     socket->write("send_screenshot" + SPLIT_SYMBOL + part.toUtf8()  + SPLIT_SYMBOL + END_SYMBOL);
-                    return "_";
                 }
             }
         }
         else if (parts[0] == "get_clients") {
             message.clear();
-            return "send_clients" + get_clients();
+            cTcpSocket->write("send_clients" + get_clients() + SPLIT_SYMBOL + END_SYMBOL);
         }
     }
-
-    return "";
 }
 
 QByteArray get_clients() {

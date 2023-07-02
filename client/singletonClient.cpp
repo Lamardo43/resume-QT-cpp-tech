@@ -16,15 +16,15 @@ SingletonClient* SingletonClient::getInstance(){
     return p_instance;
 }
 
-void SingletonClient::send_msg_to_server(QString query) {
-    mTcpSocket->write(query.toUtf8() + SPLIT_SYMBOL + END_SYMBOL);
+void SingletonClient::send_msg_to_server(QByteArray query) {
+    mTcpSocket->write(query + SPLIT_SYMBOL + END_SYMBOL);
 }
 
-QString message = "";
+QByteArray message = "";
 
 void SingletonClient::slotServerRead(){
 
-    QString mes = "";
+    QByteArray mes = "";
 
     while(mTcpSocket->bytesAvailable()>0)
     {
@@ -33,22 +33,22 @@ void SingletonClient::slotServerRead(){
 
     message.append(mes);
 
-    QList<QString> parts = message.split(SPLIT_SYMBOL);
+    QList<QByteArray> parts = message.split(SPLIT_SYMBOL.at(0));
 
     qDebug()<< message;
 
-    //qDebug() << parts.first() + " " + parts.last();
-
     if (parts.last() == END_SYMBOL)
     {
+        //qDebug() << parts.first() + " " + parts.last();
+
         parts.removeLast();
 
         if (parts[0] == "get_screenshot_to") {
             emit get_scr(parts[1]);
             message.clear();
         }
-        else if (parts[0] == "send_screenshot_to") {
-            emit set_scr(message.toUtf8());
+        else if (parts[0] == "send_screenshot") {
+            emit set_scr(parts.mid(1, parts.size()).join(""));
             message.clear();
         }
         else if (parts[0] == "send_clients") {

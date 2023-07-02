@@ -118,7 +118,7 @@ void MainWindow::on_pushButton_clicked()
     QListWidgetItem *item = ui->listWidget->currentItem();
 
     if (item) {
-        SingletonClient::getInstance()->send_msg_to_server("get_screenshot" + SPLIT_SYMBOL + item->text());
+        SingletonClient::getInstance()->send_msg_to_server("get_screenshot" + SPLIT_SYMBOL + item->text().toUtf8());
     }
 }
 
@@ -164,68 +164,47 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
     ui->last_doing_label->setVisible(true);
 }
 
-void MainWindow::slot_on_get_scr(QString owner) {
+void MainWindow::slot_on_get_scr(QByteArray owner) {
 
     QScreen *screen = QGuiApplication::primaryScreen();
 
     if (screen) {
-
         QPixmap screenshot = screen->grabWindow(0);
 
-        QByteArray byteArray = convertPixmapToByteArray(screenshot);
+        QByteArray byteArray = convertPixmapToJSONString(screenshot).toUtf8();
 
-//        int part_len = sqrt(byteArray.size());
-
-//        for (int i = part_len; i > 0; i--) {
-//            if (byteArray.size() % i == 0) {
-//                part_len = i;
-//                break;
-//            }
-//        }
-
-//        int parts_count = byteArray.size()/part_len;
-
-//        for (int i = 0; i < parts_count; i++){
-//            SingletonClient::getInstance()->
-//                    send_msg_to_server("send_screenshot_to" + SPLIT_SYMBOL + owner.toUtf8() + SPLIT_SYMBOL
-//                                       + QByteArray::number(parts_count) + SPLIT_SYMBOL + QByteArray::number(i)
-//                                       + SPLIT_SYMBOL + byteArray.mid(i*part_len, part_len));
-//        }
-
-        SingletonClient::getInstance()->send_msg_to_server("send_screenshot_to" + SPLIT_SYMBOL + owner.toUtf8() + SPLIT_SYMBOL  + byteArray);
-
-        //qDebug() << byteArray.size();
+        qDebug() << byteArray.size();
+        SingletonClient::getInstance()->send_msg_to_server("send_screenshot_to" + SPLIT_SYMBOL + owner + SPLIT_SYMBOL  + byteArray);
     }
 }
 
-void MainWindow::slot_on_set_scr(QString byteArray) {
-
-    qDebug() << "IM TRY";
-    QList<QString> parts = byteArray.split(SPLIT_SYMBOL);
-    parts.removeOne(END_SYMBOL);
-
-    if(parts[2] != parts[3]) {
-        for (int i = 4; i < parts.size(); i++) {
-            picture.append(parts[i].toUtf8());
-        }
-    }
-    else
-    {
-        ui->picture->setPixmap(convertByteArrayToPixmap(picture).scaled(ui->picture->width(), ui->picture->height(), Qt::KeepAspectRatio));
-    }
+void MainWindow::slot_on_set_scr(QByteArray byteArray) {
+    qDebug() << byteArray.size();
+    ui->picture->setPixmap(convertJSONStringToPixmap(byteArray));
 }
 
-QByteArray MainWindow::convertPixmapToByteArray(const QPixmap& pixmap) {
-    QByteArray byteArray;
-    QBuffer buffer(&byteArray);
-    buffer.open(QIODevice::WriteOnly);
-    pixmap.save(&buffer, "PNG");  // Можете выбрать другой формат сохранения, например, "JPEG"
-    buffer.close();
-    return byteArray;
+QString  MainWindow::convertPixmapToJSONString(const QPixmap& pixmap) {
+    QJsonObject jsonObject;
+        QByteArray byteArray;
+        QBuffer buffer(&byteArray);
+        buffer.open(QIODevice::WriteOnly);
+        pixmap.save(&buffer, "PNG");
+
+        QString base64Data = byteArray.toBase64();
+        jsonObject["imageData"] = base64Data;
+
+        QJsonDocument jsonDoc(jsonObject);
+        return jsonDoc.toJson();
 }
 
-QPixmap MainWindow::convertByteArrayToPixmap(const QByteArray& byteArray) {
-    QPixmap pixmap;
-    pixmap.loadFromData(byteArray);
-    return pixmap;
+QPixmap MainWindow::convertJSONStringToPixmap(const QString& jsonString) {
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8());
+        QJsonObject jsonObject = jsonDoc.object();
+
+        QString base64Data = jsonObject["imageData"].toString();
+        QByteArray byteArray = QByteArray::fromBase64(base64Data.toUtf8());
+
+        QPixmap pixmap;
+        pixmap.loadFromData(byteArray, "PNG");
+        return pixmap;
 }

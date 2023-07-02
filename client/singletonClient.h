@@ -39,11 +39,11 @@ class SingletonClient : public QObject
 
         static SingletonClient* getInstance();
 
-        void send_msg_to_server(QString query);
+        void send_msg_to_server(QByteArray query);
     signals:
        void message_from_server(QString msg);
        void get_client(QString message);
-       void get_scr(QString);
+       void get_scr(QByteArray);
        void set_scr(QByteArray);
 
     private slots:

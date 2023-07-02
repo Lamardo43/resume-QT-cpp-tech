@@ -46,7 +46,7 @@ void MyTcpServer::slotNewConnection(){
 }
 
 void MyTcpServer::slotServerRead(){
-    QString array;
+    QByteArray array;
     QTcpSocket* cTcpSocket = (QTcpSocket*)sender();
 
     while(cTcpSocket->bytesAvailable()>0)
@@ -56,7 +56,7 @@ void MyTcpServer::slotServerRead(){
 
     //qDebug() << array;
 
-    cTcpSocket->write(parse(array, cTcpSocket) + SPLIT_SYMBOL + END_SYMBOL);
+    parse(array, cTcpSocket);
 }
 
 void MyTcpServer::slotClientDisconnected(){
