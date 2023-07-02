@@ -1,5 +1,6 @@
 #include "mytcpserver.h"
 #include "functions.h"
+#include "../symbols.h"
 #include <QDebug>
 #include <QDateTime>
 #include <QCoreApplication>
@@ -34,8 +35,6 @@ void MyTcpServer::slotNewConnection(){
 
         cTcpSocket = mTcpServer->nextPendingConnection();
 
-        cTcpSocket->write("You are connected.");
-
         connect(cTcpSocket, &QTcpSocket::readyRead,
                 this,&MyTcpServer::slotServerRead);
         connect(cTcpSocket,&QTcpSocket::disconnected,
@@ -49,14 +48,15 @@ void MyTcpServer::slotNewConnection(){
 void MyTcpServer::slotServerRead(){
     QString array;
     QTcpSocket* cTcpSocket = (QTcpSocket*)sender();
+
     while(cTcpSocket->bytesAvailable()>0)
     {
         array.append(cTcpSocket->readAll());
     }
 
-    qDebug() << array;
-    qDebug() << array.split(" ").size();
-    cTcpSocket->write(parse(array, cTcpSocket));
+    //qDebug() << array;
+
+    cTcpSocket->write(parse(array, cTcpSocket) + SPLIT_SYMBOL + END_SYMBOL);
 }
 
 void MyTcpServer::slotClientDisconnected(){

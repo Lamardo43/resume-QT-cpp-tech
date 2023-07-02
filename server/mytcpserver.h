@@ -39,6 +39,7 @@ private:
     QTcpServer * mTcpServer;
     static QHash<QTcpSocket*, QString> mTcpSocket;
     int server_status;
+
 };
 #endif // MYTCPSERVER_H
 

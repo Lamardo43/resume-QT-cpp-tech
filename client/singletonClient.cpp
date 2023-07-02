@@ -1,4 +1,5 @@
 #include "singletonClient.h"
+#include "../symbols.h"
 
 SingletonClient::SingletonClient(QObject *parent) : QObject(parent){
     mTcpSocket = new QTcpSocket(this);
@@ -15,30 +16,45 @@ SingletonClient* SingletonClient::getInstance(){
     return p_instance;
 }
 
-void SingletonClient::send_msg_to_server(QString query){
-    mTcpSocket->write(query.toUtf8());
+void SingletonClient::send_msg_to_server(QString query) {
+    mTcpSocket->write(query.toUtf8() + SPLIT_SYMBOL + END_SYMBOL);
 }
 
+QString message = "";
+
 void SingletonClient::slotServerRead(){
-    QString message = "";
+
+    QString mes = "";
 
     while(mTcpSocket->bytesAvailable()>0)
     {
-        message.append(mTcpSocket->readAll());
+        mes.append(mTcpSocket->readAll());
     }
 
-    qDebug()<<message;
+    message.append(mes);
 
-    QList<QString>parts = message.split(" ");
+    QList<QString> parts = message.split(SPLIT_SYMBOL);
 
-    if (parts[0] == "get_screenshot_to") {
-        SingletonClient::getInstance()->send_msg_to_server("send_screenshot_to " + parts[1] + " " + emit get_scr());
-    }
-    else if (parts[0] == "send_screenshot") {
-        emit set_scr(parts[1].toUtf8());
-    }
-    else if (parts[0] == "send_clients") {
-        emit get_client(message);
+    qDebug()<< message;
+
+    //qDebug() << parts.first() + " " + parts.last();
+
+    if (parts.last() == END_SYMBOL)
+    {
+        parts.removeLast();
+
+        if (parts[0] == "get_screenshot_to") {
+            emit get_scr(parts[1]);
+            message.clear();
+        }
+        else if (parts[0] == "send_screenshot_to") {
+            emit set_scr(message.toUtf8());
+            message.clear();
+        }
+        else if (parts[0] == "send_clients") {
+            emit get_client(message);
+            message.clear();
+        }
     }
 }
 

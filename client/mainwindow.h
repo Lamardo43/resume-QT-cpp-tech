@@ -29,18 +29,17 @@ private slots:
     void showTrayIcon();
     void minimizeToTray();
     void restoreFromTray();
-    void slot_on_get_client(QString message);
 
-    QByteArray slot_on_get_scr();
-    void slot_on_set_scr(QByteArray);
+    void slot_on_get_client(QString message);
+    void slot_on_get_scr(QString);
+    void slot_on_set_scr(QString);
 
     void on_pushButton_clicked();
-
     void on_pushButton_2_clicked();
-
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
 private:
+    QByteArray picture = "";
     Ui::MainWindow *ui;
     QMenu *trayIconMenu;
     QAction *minimizeAction;
@@ -49,8 +48,8 @@ private:
     QSystemTrayIcon *trayIcon;
     QHash<QString, QString> clients;
     QList<QString>parts;
-    QString pixmapToJson(const QPixmap& pixmap);
-    QPixmap jsonToPixmap(const QString& jsonString);
+    QPixmap convertByteArrayToPixmap(const QByteArray& byteArray);
+    QByteArray convertPixmapToByteArray(const QPixmap& pixmap);
 };
 
 #endif // MAINWINDOW_H
