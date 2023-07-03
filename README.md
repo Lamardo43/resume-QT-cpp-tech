@@ -25,4 +25,5 @@ Ability to get screenshot from client’s desktop
 
 Автозапуска приложения нет, тк оно запускается через QT Creator. 
 
-Для корректной работы необходимо в файл clinet - singletonClient.cpp вставить ip адрес сервера (5 строчка) 
+Для корректной работы необходимо в файл clinet - singletonClient.cpp вставить ip адрес сервера (6
+строчка) 
